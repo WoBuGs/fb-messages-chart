@@ -6,56 +6,58 @@ from autolabel import autolabel
 import argparse
 
 parser = argparse.ArgumentParser(description='Display statistics about a Messenger conversation')
-parser.add_argument('file', metavar='file', type=argparse.FileType('r'), help='path of the conversation (in json)')
 parser.add_argument('-w', dest='width', action='store', metavar='width', type=float, default=1, help='a width for the rects')
 parser.add_argument('-m', dest='min_month', action='store', metavar='min_month', type=int, default=0)
 parser.add_argument('-y', dest='min_year', action='store', metavar='min_year', type=int, default=0)
 parser.add_argument('-M', dest='max_month', action='store', metavar='max_month', type=int, default=9999)
 parser.add_argument('-Y', dest='max_year', action='store', metavar='max_year', type=int, default=9999)
+parser.add_argument('files', metavar='files', nargs='+',help='path of the conversations (in json)')
 args = parser.parse_args()
 
-f = args.file
 width = args.width
 min_month = args.min_month
 min_year = args.min_year
 max_month = args.max_month
 max_year = args.max_year
+files = args.files
 
-
-data = json.load(f)
-messages = data["messages"]
-
-participants = []
-for participant in data["participants"]:
-    participants.append(participant["name"])
 
 stats = {}
-for message in messages:
-   sender = message["sender_name"]
-   timestamp = int(message["timestamp_ms"]/1000)
-   year = datetime.fromtimestamp(timestamp).year
-   month = datetime.fromtimestamp(timestamp).month
+participants = []
+for file in files:
+    f = open(file)
+    data = json.load(f)
+    messages = data["messages"]
 
-   if year < min_year:
-      continue
-   if year <= min_year and month < min_month:
-      continue
-   if year > max_year:
-      continue
-   if year >= max_year and month > max_month:
-      continue
+    for participant in data["participants"]:
+        participants.append(participant["name"])
 
-   month = str(year)[2:] + "-" + str(month).zfill(2)
+    for message in messages:
+       sender = message["sender_name"]
+       timestamp = int(message["timestamp_ms"]/1000)
+       year = datetime.fromtimestamp(timestamp).year
+       month = datetime.fromtimestamp(timestamp).month
 
-   try:
-       old = stats[month]
+       if year < min_year:
+          continue
+       if year <= min_year and month < min_month:
+          continue
+       if year > max_year:
+          continue
+       if year >= max_year and month > max_month:
+          continue
+
+       month = str(year)[2:] + "-" + str(month).zfill(2)
+
        try:
-           s = old[sender]
-           stats[month][sender] = stats[month][sender] + 1
+           old = stats[month]
+           try:
+               s = old[sender]
+               stats[month][sender] = stats[month][sender] + 1
+           except:
+               stats[month][sender] = 1
        except:
-           stats[month][sender] = 1
-   except:
-       stats[month] = {sender: 1}
+           stats[month] = {sender: 1}
 
 p_list = {}
 m_list = []
@@ -87,8 +89,11 @@ plt.title('Messages per month')
 plt.xticks(ind, m_list)
 plt.legend(plots, participants)
 
-print("Total messages: " + str(len(messages)))
-print()
+total = 0
 for participant in participants:
-    print(participant.ljust(participant_name_len_max+1) + str(sum(p_list[participant])))
+    sub = sum(p_list[participant])
+    print(participant.ljust(participant_name_len_max+1) + str(sub))
+    total = total + sub
+print()
+print("Total messages: " + str(total))
 plt.show()
