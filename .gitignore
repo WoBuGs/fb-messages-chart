@@ -104,4 +104,4 @@ venv.bak/
 .mypy_cache/
 
 # fb-messages-chart
-message.json
+message_*.json

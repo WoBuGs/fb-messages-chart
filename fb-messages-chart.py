@@ -22,6 +22,7 @@ max_year = args.max_year
 files = args.files
 
 
+start = True
 stats = {}
 participants = []
 for file in files:
@@ -29,8 +30,10 @@ for file in files:
     data = json.load(f)
     messages = data["messages"]
 
-    for participant in data["participants"]:
-        participants.append(participant["name"])
+    if start:
+        for participant in data["participants"]:
+            participants.append(participant["name"])
+        start = False
 
     for message in messages:
        sender = message["sender_name"]
@@ -58,6 +61,7 @@ for file in files:
                stats[month][sender] = 1
        except:
            stats[month] = {sender: 1}
+    f.close()
 
 p_list = {}
 m_list = []
