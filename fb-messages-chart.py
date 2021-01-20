@@ -6,12 +6,12 @@ from autolabel import autolabel
 import argparse
 
 parser = argparse.ArgumentParser(description='Display statistics about a Messenger conversation')
-parser.add_argument('-w', dest='width', action='store', metavar='width', type=float, default=1, help='a width for the rects')
-parser.add_argument('-m', dest='min_month', action='store', metavar='min_month', type=int, default=0)
-parser.add_argument('-y', dest='min_year', action='store', metavar='min_year', type=int, default=0)
-parser.add_argument('-M', dest='max_month', action='store', metavar='max_month', type=int, default=9999)
-parser.add_argument('-Y', dest='max_year', action='store', metavar='max_year', type=int, default=9999)
-parser.add_argument('files', metavar='files', nargs='+',help='path of the conversations (in json)')
+parser.add_argument('-w', dest='width', action='store', metavar='width', type=float, default=1, help='width of the rects [default=1]')
+parser.add_argument('-m', dest='min_month', action='store', metavar='min_month', type=int, default=0, help='month of the start date [default=0]')
+parser.add_argument('-y', dest='min_year', action='store', metavar='min_year', type=int, default=0, help='year of the start date [default=0]')
+parser.add_argument('-M', dest='max_month', action='store', metavar='max_month', type=int, default=9999, help='month of the end date [default=9999]')
+parser.add_argument('-Y', dest='max_year', action='store', metavar='max_year', type=int, default=9999, help='year of the end date [default=9999]')
+parser.add_argument('files', metavar='files', nargs='+',help='path of the conversations (json format)')
 args = parser.parse_args()
 
 width = args.width
