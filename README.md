@@ -1,9 +1,9 @@
 # fb-messages-chart
 
-This tool is designed to display the number of messages per participant of a Facebook Messenger conversation with bar charts.
+This tool is designed to display the number of messages per participant of a Facebook Messenger or Instagram conversation with bar charts.
 
 ### Help
-Display statistics about a Messenger conversation
+Display statistics about a Messenger or Instagram conversation extract conversation
 
 ```
 positional arguments:
