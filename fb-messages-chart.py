@@ -4,12 +4,15 @@ from datetime import datetime
 
 import matplotlib.pyplot as plt
 import numpy as np
+from rich_argparse import RichHelpFormatter
 
 from autolabel import autolabel
 
 parser = argparse.ArgumentParser(
-    description="Display statistics about a Messenger or Instagram conversation extract"
+    description="Display statistics about a Messenger or Instagram conversation extract",
+    formatter_class=RichHelpFormatter
 )
+
 parser.add_argument(
     "-w",
     dest="width",
