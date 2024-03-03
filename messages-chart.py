@@ -1,16 +1,18 @@
 import argparse
 import json
+import os
 from datetime import datetime
 
 import matplotlib.pyplot as plt
 import numpy as np
 from rich_argparse import RichHelpFormatter
+from tqdm.rich import tqdm
 
-from autolabel import autolabel
+from utils import autolabel, natural_keys
 
 parser = argparse.ArgumentParser(
     description="Display statistics about a Messenger or Instagram conversation extract",
-    formatter_class=RichHelpFormatter
+    formatter_class=RichHelpFormatter,
 )
 
 parser.add_argument(
@@ -20,7 +22,7 @@ parser.add_argument(
     metavar="width",
     type=float,
     default=1,
-    help="width of the rects [default=1]",
+    help="width of the rects (default=1)",
 )
 parser.add_argument(
     "-m",
@@ -29,7 +31,7 @@ parser.add_argument(
     metavar="min_month",
     type=int,
     default=0,
-    help="month of the start date [default=0]",
+    help="month of the start date (default=0)",
 )
 parser.add_argument(
     "-y",
@@ -38,7 +40,7 @@ parser.add_argument(
     metavar="min_year",
     type=int,
     default=0,
-    help="year of the start date [default=0]",
+    help="year of the start date (default=0)",
 )
 parser.add_argument(
     "-M",
@@ -47,7 +49,7 @@ parser.add_argument(
     metavar="max_month",
     type=int,
     default=9999,
-    help="month of the end date [default=9999]",
+    help="month of the end date (default=9999)",
 )
 parser.add_argument(
     "-Y",
@@ -56,10 +58,13 @@ parser.add_argument(
     metavar="max_year",
     type=int,
     default=9999,
-    help="year of the end date [default=9999]",
+    help="year of the end date (default=9999)",
 )
 parser.add_argument(
-    "files", metavar="files", nargs="+", help="path of the conversations (json format)"
+    "inputs",
+    metavar="inputs",
+    nargs="+",
+    help="path of the conversations (json format), file or dir",
 )
 args = parser.parse_args()
 
@@ -68,13 +73,23 @@ min_month = args.min_month
 min_year = args.min_year
 max_month = args.max_month
 max_year = args.max_year
-files = args.files
+inputs = args.inputs
 
+files = []
+for input in inputs:
+    if os.path.isdir(input):
+        for subfile in os.listdir(input):
+            files.append(input + "/" + subfile)
+    else:
+        files.append(input)
+
+# Natural sort of input files (e.g., messages_1.json, messages_2.json, messages_10.json)
+files.sort(key=natural_keys)
 
 start = True
 stats = {}
 participants = []
-for file in files:
+for file in tqdm(files):
     f = open(file)
     data = json.load(f)
     messages = data["messages"]

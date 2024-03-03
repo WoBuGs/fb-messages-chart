@@ -6,5 +6,6 @@ __pycache__/
 # Ruff
 .ruff_cache/
 
-# fb-messages-chart
+# messages-chart
 message_*.json
+messages/
